@@ -12,12 +12,13 @@
 
 namespace Consensus {
 
-enum DeploymentPos {
+enum DeploymentPos
+{
     DEPLOYMENT_TESTDUMMY,
-    // Deployment of BIP68, BIP112, and BIP113.
-    DEPLOYMENT_CSV,
-    // NOTE: Also add new deployments to VersionBitsDeploymentInfo in
-    // versionbits.cpp
+    DEPLOYMENT_CSV, // Deployment of BIP68, BIP112, and BIP113.
+    DEPLOYMENT_SEGWIT, // Deployment of BIP141, BIP143, and BIP147.
+    DEPLOYMENT_SEGWIT2X, // Deployment of SEGWIT2X
+    // NOTE: Also add new deployments to VersionBitsDeploymentInfo in versionbits.cpp
     MAX_VERSION_BITS_DEPLOYMENTS
 };
 
@@ -27,11 +28,14 @@ enum DeploymentPos {
 struct BIP9Deployment {
     /** Bit position to select the particular bit in nVersion. */
     int bit;
-    /** Start MedianTime for version bits miner confirmation. Can be a date in
-     * the past */
+    /** Start MedianTime for version bits miner confirmation. Can be a date in the past */
     int64_t nStartTime;
     /** Timeout/expiry MedianTime for the deployment attempt. */
     int64_t nTimeout;
+    /** Overriding the default threshold if not zero. */
+    uint32_t nOverrideRuleChangeActivationThreshold = 0;
+    /** Overriding the default confirmation window if not zero . */
+    uint32_t nOverrideMinerConfirmationWindow = 0;
 };
 
 /**
@@ -47,14 +51,12 @@ struct Params {
     int BIP65Height;
     /** Block height at which BIP66 becomes active */
     int BIP66Height;
-    /** Block height at which OP_RETURN replay protection stops */
-    int antiReplayOpReturnSunsetHeight;
-    /** Committed OP_RETURN value for replay protection */
-    std::vector<unsigned char> antiReplayOpReturnCommitment;
+    /** Block height delta at which BIP102 becomes active */
+    int BIP102HeightDelta;
+
     /**
-     * Minimum blocks including miner confirmation of the total of 2016 blocks
-     * in a retargeting period, (nPowTargetTimespan / nPowTargetSpacing) which
-     * is also used for BIP9 deployments.
+     * Minimum blocks including miner confirmation of the total of 2016 blocks in a retargeting period,
+     * (nPowTargetTimespan / nPowTargetSpacing) which is also used for BIP9 deployments.
      * Examples: 1916 for 95%, 1512 for testchains.
      */
     uint32_t nRuleChangeActivationThreshold;
@@ -66,9 +68,7 @@ struct Params {
     bool fPowNoRetargeting;
     int64_t nPowTargetSpacing;
     int64_t nPowTargetTimespan;
-    int64_t DifficultyAdjustmentInterval() const {
-        return nPowTargetTimespan / nPowTargetSpacing;
-    }
+    int64_t DifficultyAdjustmentInterval() const { return nPowTargetTimespan / nPowTargetSpacing; }
     uint256 nMinimumChainWork;
     uint256 defaultAssumeValid;
 };

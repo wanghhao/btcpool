@@ -1,9 +1,9 @@
 /* src/config/bitcoin-config.h.  Generated from bitcoin-config.h.in by configure.  */
 /* src/config/bitcoin-config.h.in.  Generated from configure.ac by autoheader.  */
 
-#ifndef BITCOIN_BITCOIN_CONFIG_H
+#ifndef BITCOIN_CONFIG_H
 
-#define BITCOIN_BITCOIN_CONFIG_H
+#define BITCOIN_CONFIG_H
 
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
@@ -15,7 +15,7 @@
 #define CLIENT_VERSION_IS_RELEASE true
 
 /* Major version */
-#define CLIENT_VERSION_MAJOR 0
+#define CLIENT_VERSION_MAJOR 1
 
 /* Minor version */
 #define CLIENT_VERSION_MINOR 14
@@ -27,10 +27,10 @@
 #define COPYRIGHT_HOLDERS "The %s developers"
 
 /* Copyright holder(s) */
-#define COPYRIGHT_HOLDERS_FINAL "The Bitcoin developers"
+#define COPYRIGHT_HOLDERS_FINAL "The Bitcoin Core developers"
 
 /* Replacement for %s in copyright holders string */
-#define COPYRIGHT_HOLDERS_SUBSTITUTION "Bitcoin"
+#define COPYRIGHT_HOLDERS_SUBSTITUTION "Bitcoin Core"
 
 /* Copyright year */
 #define COPYRIGHT_YEAR 2017
@@ -313,22 +313,22 @@
 #define LT_OBJDIR ".libs/"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "https://github.com/Bitcoin-ABC/bitcoin-abc/issues"
+#define PACKAGE_BUGREPORT "https://github.com/bitcoin/bitcoin/issues"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "Bitcoin ABC"
+#define PACKAGE_NAME "btc1 Core"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Bitcoin ABC 0.14.5"
+#define PACKAGE_STRING "btc1 Core 1.14.5"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "bitcoin"
 
 /* Define to the home page for this package. */
-#define PACKAGE_URL "https://bitcoinabc.org/"
+#define PACKAGE_URL "https://bitcoincore.org/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.14.5"
+#define PACKAGE_VERSION "1.14.5"
 
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */
@@ -385,4 +385,4 @@
 /* Define for large files, on AIX-style hosts. */
 /* #undef _LARGE_FILES */
 
-#endif // BITCOIN_BITCOIN_CONFIG_H
+#endif //BITCOIN_CONFIG_H

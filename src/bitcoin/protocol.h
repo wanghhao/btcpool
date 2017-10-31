@@ -15,7 +15,7 @@
 #include "uint256.h"
 #include "version.h"
 
-#include <cstdint>
+#include <stdint.h>
 #include <string>
 
 /** Message header.
@@ -24,7 +24,8 @@
  * (4) size.
  * (4) checksum.
  */
-class CMessageHeader {
+class CMessageHeader
+{
 public:
     enum {
         MESSAGE_START_SIZE = 4,
@@ -34,22 +35,21 @@ public:
 
         MESSAGE_SIZE_OFFSET = MESSAGE_START_SIZE + COMMAND_SIZE,
         CHECKSUM_OFFSET = MESSAGE_SIZE_OFFSET + MESSAGE_SIZE_SIZE,
-        HEADER_SIZE = MESSAGE_START_SIZE + COMMAND_SIZE + MESSAGE_SIZE_SIZE +
-                      CHECKSUM_SIZE
+        HEADER_SIZE = MESSAGE_START_SIZE + COMMAND_SIZE + MESSAGE_SIZE_SIZE + CHECKSUM_SIZE
     };
     typedef unsigned char MessageStartChars[MESSAGE_START_SIZE];
 
-    CMessageHeader(const MessageStartChars &pchMessageStartIn);
-    CMessageHeader(const MessageStartChars &pchMessageStartIn,
-                   const char *pszCommand, unsigned int nMessageSizeIn);
+    CMessageHeader(const MessageStartChars& pchMessageStartIn);
+    CMessageHeader(const MessageStartChars& pchMessageStartIn, const char* pszCommand, unsigned int nMessageSizeIn);
 
     std::string GetCommand() const;
-    bool IsValid(const MessageStartChars &messageStart) const;
+    bool IsValid(const MessageStartChars& messageStart) const;
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream &s, Operation ser_action) {
+    inline void SerializationOp(Stream& s, Operation ser_action)
+    {
         READWRITE(FLATDATA(pchMessageStart));
         READWRITE(FLATDATA(pchCommand));
         READWRITE(nMessageSize);
@@ -249,31 +249,27 @@ const std::vector<std::string> &getAllNetMessageTypes();
 enum ServiceFlags : uint64_t {
     // Nothing
     NODE_NONE = 0,
-    // NODE_NETWORK means that the node is capable of serving the block chain.
-    // It is currently set by all Bitcoin Core nodes, and is unset by SPV
-    // clients or other peers that just want network services but don't provide
-    // them.
+    // NODE_NETWORK means that the node is capable of serving the block chain. It is currently
+    // set by all Bitcoin Core nodes, and is unset by SPV clients or other peers that just want
+    // network services but don't provide them.
     NODE_NETWORK = (1 << 0),
-    // NODE_GETUTXO means the node is capable of responding to the getutxo
-    // protocol request. Bitcoin Core does not support this but a patch set
-    // called Bitcoin XT does. See BIP 64 for details on how this is
-    // implemented.
+    // NODE_GETUTXO means the node is capable of responding to the getutxo protocol request.
+    // Bitcoin Core does not support this but a patch set called Bitcoin XT does.
+    // See BIP 64 for details on how this is implemented.
     NODE_GETUTXO = (1 << 1),
-    // NODE_BLOOM means the node is capable and willing to handle bloom-filtered
-    // connections. Bitcoin Core nodes used to support this by default, without
-    // advertising this bit, but no longer do as of protocol version 70011 (=
-    // NO_BLOOM_VERSION)
+    // NODE_BLOOM means the node is capable and willing to handle bloom-filtered connections.
+    // Bitcoin Core nodes used to support this by default, without advertising this bit,
+    // but no longer do as of protocol version 70011 (= NO_BLOOM_VERSION)
     NODE_BLOOM = (1 << 2),
-    // NODE_XTHIN means the node supports Xtreme Thinblocks. If this is turned
-    // off then the node will not service nor make xthin requests.
+    // NODE_WITNESS indicates that a node can be asked for blocks and transactions including
+    // witness data.
+    NODE_WITNESS = (1 << 3),
+    // NODE_XTHIN means the node supports Xtreme Thinblocks
+    // If this is turned off then the node will not service nor make xthin requests
     NODE_XTHIN = (1 << 4),
-    // NODE_BITCOIN_CASH means the node supports Bitcoin Cash and the
-    // associated consensus rule changes.
-    // This service bit is intended to be used prior until some time after the
-    // UAHF activation when the Bitcoin Cash network has adequately separated.
-    // TODO: remove (free up) the NODE_BITCOIN_CASH service bit once no longer
-    // needed.
-    NODE_BITCOIN_CASH = (1 << 5),
+
+    // NODE_SEGWIT2X supports segwit2x
+    NODE_SEGWIT2X = (1 << 7),
 
     // Bits 24-31 are reserved for temporary experiments. Just pick a bit that
     // isn't getting used, or one not being used much, and notify the
@@ -285,7 +281,8 @@ enum ServiceFlags : uint64_t {
 };
 
 /** A CService with information about it as peer */
-class CAddress : public CService {
+class CAddress : public CService
+{
 public:
     CAddress();
     explicit CAddress(CService ipIn, ServiceFlags nServicesIn);
@@ -295,17 +292,20 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream &s, Operation ser_action) {
-        if (ser_action.ForRead()) Init();
+    inline void SerializationOp(Stream& s, Operation ser_action)
+    {
+        if (ser_action.ForRead())
+            Init();
         int nVersion = s.GetVersion();
-        if (s.GetType() & SER_DISK) READWRITE(nVersion);
+        if (s.GetType() & SER_DISK)
+            READWRITE(nVersion);
         if ((s.GetType() & SER_DISK) ||
             (nVersion >= CADDR_TIME_VERSION && !(s.GetType() & SER_GETHASH)))
             READWRITE(nTime);
         uint64_t nServicesInt = nServices;
         READWRITE(nServicesInt);
         nServices = (ServiceFlags)nServicesInt;
-        READWRITE(*(CService *)this);
+        READWRITE(*(CService*)this);
     }
 
     // TODO: make private (improves encapsulation)
@@ -317,59 +317,46 @@ public:
 };
 
 /** getdata message type flags */
-const uint32_t MSG_EXT_FLAG = 1 << 29;
-const uint32_t MSG_TYPE_MASK = 0xffffffff >> 3;
+const uint32_t MSG_WITNESS_FLAG = 1 << 30;
+const uint32_t MSG_TYPE_MASK    = 0xffffffff >> 2;
 
 /** getdata / inv message types.
  * These numbers are defined by the protocol. When adding a new value, be sure
  * to mention it in the respective BIP.
  */
-enum GetDataMsg {
+enum GetDataMsg
+{
     UNDEFINED = 0,
     MSG_TX = 1,
     MSG_BLOCK = 2,
     // The following can only occur in getdata. Invs always use TX or BLOCK.
-    //!< Defined in BIP37
-    MSG_FILTERED_BLOCK = 3,
-    //!< Defined in BIP152
-    MSG_CMPCT_BLOCK = 4,
-
-    //!< Extension block
-    MSG_EXT_TX = MSG_TX | MSG_EXT_FLAG,
-    MSG_EXT_BLOCK = MSG_BLOCK | MSG_EXT_FLAG,
+    MSG_FILTERED_BLOCK = 3,  //!< Defined in BIP37
+    MSG_CMPCT_BLOCK = 4,     //!< Defined in BIP152
+    MSG_WITNESS_BLOCK = MSG_BLOCK | MSG_WITNESS_FLAG, //!< Defined in BIP144
+    MSG_WITNESS_TX = MSG_TX | MSG_WITNESS_FLAG,       //!< Defined in BIP144
+    MSG_FILTERED_WITNESS_BLOCK = MSG_FILTERED_BLOCK | MSG_WITNESS_FLAG,
 };
 
 /** inv message data */
-class CInv {
+class CInv
+{
 public:
     CInv();
-    CInv(int typeIn, const uint256 &hashIn);
+    CInv(int typeIn, const uint256& hashIn);
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream &s, Operation ser_action) {
+    inline void SerializationOp(Stream& s, Operation ser_action)
+    {
         READWRITE(type);
         READWRITE(hash);
     }
 
-    friend bool operator<(const CInv &a, const CInv &b);
+    friend bool operator<(const CInv& a, const CInv& b);
 
     std::string GetCommand() const;
     std::string ToString() const;
-
-    uint32_t GetKind() const { return type & MSG_TYPE_MASK; }
-
-    bool IsTx() const {
-        auto k = GetKind();
-        return k == MSG_TX;
-    }
-
-    bool IsSomeBlock() const {
-        auto k = GetKind();
-        return k == MSG_BLOCK || k == MSG_FILTERED_BLOCK ||
-               k == MSG_CMPCT_BLOCK;
-    }
 
     // TODO: make private (improves encapsulation)
 public:
