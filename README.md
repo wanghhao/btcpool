@@ -1,13 +1,15 @@
-BTCPool for Bitcoin Cash
+BTCPool for Bitcoin segwit2x 2MB hardfork
 ==================
 
 BTCPool is backend system of [https://pool.btc.com](https://pool.btc.com).
 
-The pool backend work with Bitcoin Cash.
+The pool backend work with Bitcoin segwit2x 2MB hardfork.
 
 Note: This is still a testbed and work in progress, all things could be changed.
 
-See Also: [BTCPool for Bitcoin](https://github.com/btccom/btcpool).
+See Also: [BTCPool for Bitcoin Core](https://github.com/btccom/btcpool), [BTCPool for Bitcoin Cash](https://github.com/btccom/bccpool).
+
+The project structure will refactor in the future and all Bitcoin-like pool backend will merge in one.
 
 ## Architecture
 
