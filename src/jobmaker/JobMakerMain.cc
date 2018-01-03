@@ -33,6 +33,7 @@
 #include <boost/interprocess/sync/file_lock.hpp>
 #include <glog/logging.h>
 #include <libconfig.h++>
+#include <boost/algorithm/string.hpp>
 
 #include "zmq.hpp"
 
@@ -133,13 +134,17 @@ int main(int argc, char **argv) {
 
   try {
     // check if we are using testnet3
-    bool isTestnet3 = true;
-    cfg.lookupValue("testnet", isTestnet3);
-    if (isTestnet3) {
+    std::string netcat = "";
+    cfg.lookupValue("netcat", netcat);
+    if (boost::iequals(netcat, "testnet")) {
       SelectParams(CBaseChainParams::TESTNET);
       LOG(WARNING) << "using bitcoin testnet3";
-    } else {
+    } else  if (boost::iequals(netcat, "main")){
       SelectParams(CBaseChainParams::MAIN);
+      LOG(WARNING) << "using bitcoin main";
+    }else{
+      SelectParams(CBaseChainParams::REGTEST);
+      LOG(WARNING) << "using bitcoin regtest";
     }
 
     string fileLastJobTime;

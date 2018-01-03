@@ -78,33 +78,33 @@ bool GbtMaker::init() {
   // check bitcoind
   {
     string response;
-    string request = "{\"jsonrpc\":\"1.0\",\"id\":\"1\",\"method\":\"getinfo\",\"params\":[]}";
+    string request = "{\"jsonrpc\":\"1.0\",\"id\":\"1\",\"method\":\"getblockchaininfo\",\"params\":[]}";
     bool res = bitcoindRpcCall(bitcoindRpcAddr_.c_str(), bitcoindRpcUserpass_.c_str(),
                                request.c_str(), response);
     if (!res) {
       LOG(ERROR) << "bitcoind rpc call failure";
       return false;
     }
-    LOG(INFO) << "bitcoind getinfo: " << response;
+    LOG(INFO) << "bitcoind getblockchaininfo: " << response;
 
-    JsonNode r;
-    if (!JsonNode::parse(response.c_str(),
-                         response.c_str() + response.length(), r)) {
-      LOG(ERROR) << "decode gbt failure";
-      return false;
-    }
-
-    // check fields
-    if (r["result"].type() != Utilities::JS::type::Obj ||
-        r["result"]["connections"].type() != Utilities::JS::type::Int ||
-        r["result"]["blocks"].type()      != Utilities::JS::type::Int) {
-      LOG(ERROR) << "getinfo missing some fields";
-      return false;
-    }
-    if (r["result"]["connections"].int32() <= 0) {
-      LOG(ERROR) << "bitcoind connections is zero";
-      return false;
-    }
+//    JsonNode r;
+//    if (!JsonNode::parse(response.c_str(),
+//                         response.c_str() + response.length(), r)) {
+//      LOG(ERROR) << "decode gbt failure";
+//      return false;
+//    }
+//
+//    // check fields
+//    if (r["result"].type() != Utilities::JS::type::Obj ||
+//        r["result"]["connections"].type() != Utilities::JS::type::Int ||
+//        r["result"]["blocks"].type()      != Utilities::JS::type::Int) {
+//      LOG(ERROR) << "getblockchaininfo missing some fields";
+//      return false;
+//    }
+//    if (r["result"]["connections"].int32() <= 0) {
+//      LOG(ERROR) << "bitcoind connections is zero";
+//      return false;
+//    }
   }
 
   if (isCheckZmq_ && !checkBitcoindZMQ())
@@ -514,19 +514,19 @@ bool NMCAuxBlockMaker::init() {
   // check namecoind
   {
     string response;
-    string request = "{\"jsonrpc\":\"1.0\",\"id\":\"1\",\"method\":\"getinfo\",\"params\":[]}";
+    string request = "{\"jsonrpc\":\"1.0\",\"id\":\"1\",\"method\":\"getblockchaininfo\",\"params\":[]}";
     bool res = bitcoindRpcCall(rpcAddr_.c_str(), rpcUserpass_.c_str(),
                                request.c_str(), response);
     if (!res) {
       LOG(ERROR) << "namecoind rpc call failure";
       return false;
     }
-    LOG(INFO) << "namecoind getinfo: " << response;
+    LOG(INFO) << "namecoind getblockchaininfo: " << response;
 
     JsonNode r;
     if (!JsonNode::parse(response.c_str(),
                          response.c_str() + response.length(), r)) {
-      LOG(ERROR) << "decode getinfo failure";
+      LOG(ERROR) << "decode getblockchaininfo failure";
       return false;
     }
 
@@ -534,7 +534,7 @@ bool NMCAuxBlockMaker::init() {
     if (r["result"].type() != Utilities::JS::type::Obj ||
         r["result"]["connections"].type() != Utilities::JS::type::Int ||
         r["result"]["blocks"].type()      != Utilities::JS::type::Int) {
-      LOG(ERROR) << "getinfo missing some fields";
+      LOG(ERROR) << "getblockchaininfo missing some fields";
       return false;
     }
     if (r["result"]["connections"].int32() <= 0) {

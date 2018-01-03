@@ -604,7 +604,7 @@ void BlockMaker::_saveBlockToDBThread(const FoundBlock &foundBlock,
 }
 
 bool BlockMaker::checkBitcoinds() {
-  const string request = "{\"jsonrpc\":\"1.0\",\"id\":\"1\",\"method\":\"getinfo\",\"params\":[]}";
+  const string request = "{\"jsonrpc\":\"1.0\",\"id\":\"1\",\"method\":\"getblockchaininfo\",\"params\":[]}";
 
   if (bitcoindRpcUri_.size() == 0)
     return false;
@@ -617,17 +617,17 @@ bool BlockMaker::checkBitcoinds() {
       return false;
     }
     LOG(INFO) << "response: " << response;
-    JsonNode r;
-    if (!JsonNode::parse(response.c_str(), response.c_str() + response.length(), r)) {
-      LOG(ERROR) << "json parse failure: " << response;
-      return false;
-    }
-    JsonNode result = r["result"];
-    if (result.type() == Utilities::JS::type::Null ||
-        result["connections"].int32() == 0) {
-      LOG(ERROR) << "bitcoind is NOT works fine, getinfo: " << response;
-      return false;
-    }
+//    JsonNode r;
+//    if (!JsonNode::parse(response.c_str(), response.c_str() + response.length(), r)) {
+//      LOG(ERROR) << "json parse failure: " << response;
+//      return false;
+//    }
+//    JsonNode result = r["result"];
+//    if (result.type() == Utilities::JS::type::Null ||
+//        result["connections"].int32() == 0) {
+//      LOG(ERROR) << "bitcoind is NOT works fine, getblockchaininfo: " << response;
+//      return false;
+//    }
   }
 
   return true;
